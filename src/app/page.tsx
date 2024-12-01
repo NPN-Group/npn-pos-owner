@@ -1,11 +1,13 @@
+import { MainLayout } from "@/shared/components";
 
-
-export default function Home() {
+export default function Home({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
-    <div>
-      <main>
-
-      </main>
-    </div>
+    <MainLayout className="flex-1 p-4 overflow-y-auto">
+      {children}
+    </MainLayout>
   );
 }

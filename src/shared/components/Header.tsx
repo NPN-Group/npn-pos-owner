@@ -1,0 +1,29 @@
+import Link from "next/link";
+import Image from "next/image";
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import MenuIcon from '@mui/icons-material/Menu';
+
+type HeaderProps = {
+    onMenuToggle: () => void;
+};
+
+export default function Header({ onMenuToggle }: HeaderProps) {
+    return (
+        <header className="w-full bg-[#f7f7f7] flex flex-1 items-center justify-between px-3 py-4 max-h-12 h-full">
+            <div className="flex items-center space-x-4">
+                <div onClick={onMenuToggle} className="transition ease-in duration-100 hover:cursor-pointer hover:scale-125">
+                    <MenuIcon className="text-2xl text-gray-600" />
+                </div>
+                <Link href="/"><Image src="/assets/logo.svg" alt="logo" width={100} height={100} /></Link>
+            </div>
+            <div className="flex items-center space-x-2">
+                <div onClick={() => console.log(`Notifications clicked`)} className="hover:cursor-pointer">
+                    <NotificationsIcon className="text-2xl text-gray-600" />
+                </div>
+                <div onClick={() => console.log(`Avatar clicked`)} className="flex items-center justify-center w-7 h-7 bg-gray-300 rounded-full border-2 border-[#f0f0f0] hover:cursor-pointer">
+                    <Image src="/assets/avatar.jpg" alt="avatar" width={100} height={100} className="rounded-full w-6 h-6 hover:border-4 border-white box-content" />
+                </div>
+            </div>
+        </header>
+    )
+}
