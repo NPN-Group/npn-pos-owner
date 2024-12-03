@@ -22,9 +22,7 @@ export default function Menu() {
         { id: 10, startTime: '12:00 PM', quantity: 5 },
         { id: 11, startTime: '12:00 PM', quantity: 5 },
         { id: 12, startTime: '12:00 PM', quantity: 5 },
-        { id: 13, startTime: '12:00 PM', quantity: 5 },
-        { id: 14, startTime: '12:00 PM', quantity: 5 },
-        { id: 15, startTime: '12:00 PM', quantity: 5 },
+
       ];
       const renderOnlyTable = () => {
         return <div className='grid grid-cols-3 grid-flow-row pr-20 pl-40'>
