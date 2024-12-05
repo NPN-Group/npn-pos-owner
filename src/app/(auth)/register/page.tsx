@@ -32,13 +32,7 @@ export default function Register() {
         setErrors({ email: "", password: "", confirmPassword: "" });
         try {
             const data = RegisterSchema.parse(formData);
-
             register(data);
-
-            setFormData({ email: "", password: "", confirmPassword: "", });
-            setErrors({ email: "", password: "", confirmPassword: "", });
-
-            console.log("Form submitted successfully");
         } catch (err) {
             if (err instanceof ZodError) {
                 const newErrors: TError = { email: "", password: "", confirmPassword: "", };
