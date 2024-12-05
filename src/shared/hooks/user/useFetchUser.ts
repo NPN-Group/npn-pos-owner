@@ -7,8 +7,15 @@ import { UserService } from "@/shared/services";
 export const useFetchUser = () => {
   return useQuery<APIResponse<UserResponse>, Error>({
     queryKey: ["user"],
-    queryFn: () => UserService.fetchUser(),
-    refetchOnWindowFocus: true,
+    queryFn: () => {
+      try {
+        return UserService.fetchUser();
+      } catch (error) {
+        console.error(error);
+        throw new Error("Failed to fetch user");
+      }
+    },
+    refetchOnWindowFocus: false,
     staleTime: 1000 * 60 * 5,
   });
 };
