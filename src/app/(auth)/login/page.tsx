@@ -3,15 +3,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { ZodError } from "zod";
-import { LoginSchema, TLogin, TError } from "@/shared/types";
+import { LoginSchema, TLogin, TError } from "@/shared/types"
 import { InputField } from "@/shared/components";
-
+import { useLogin } from "@/shared/hooks/auth";
 
 export default function Login() {
     const [formData, setFormData] = useState<TLogin>({ email: "", password: "" });
     const [errors, setErrors] = useState<TError>({ email: "", password: "" });
     const [focused, setFocused] = useState({ email: false, password: false });
-
     const handleInputChange = (field: string, value: string) => {
         setFormData((prev) => ({ ...prev, [field]: value }));
     };
@@ -20,23 +19,16 @@ export default function Login() {
         setFocused((prev) => ({ ...prev, [field]: isFocused }));
     };
 
-    const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const { mutate: login } = useLogin();
+
+    const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        const { email, password } = formData;
         setErrors({ email: "", password: "" });
-        console.log(formData);
 
         try {
-            // Validate form data using Zod schema
-            LoginSchema.parse({ email, password });
-
-            // If successful, clear form data
-            setFormData({ email: "", password: "" });
-            setErrors({ email: "", password: "" });
-
-            console.log("Form submitted successfully");
-
+            const data = LoginSchema.parse(formData);
+            login(data)
         } catch (err) {
             if (err instanceof ZodError) {
                 const newErrors: TError = { email: "", password: "" };
@@ -65,10 +57,7 @@ export default function Login() {
                         <p className="text-lg font-semibold text-center">Connect your account</p>
                     </div>
                 </div>
-                <form className="flex flex-col gap-8 sm:mb-auto" onSubmit={handleFormSubmit} action={async (formData: FormData) => {
-                    console.log(formData.get("mail"));
-                    console.log(formData.get("password"));
-                }}>
+                <form className="flex flex-col gap-8 sm:mb-auto" onSubmit={handleFormSubmit}>
                     <section className="flex flex-col gap-8">
                         <InputField
                             id="mail"
@@ -99,7 +88,7 @@ export default function Login() {
                     </section>
                     <button
                         type="submit"
-                        className="bg-[#F5533D] text-white font-bold text-xl rounded max-w-[20rem] w-[95%] mx-auto py-2 px-4"
+                        className="bg-[#F5533D] text-white font-bold text-xl rounded max-w-[20rem] w-[95%] mx-auto py-2 px-4 hover:bg-[#F5533D] hover:opacity-75"
                     >
                         Log in
                     </button>
