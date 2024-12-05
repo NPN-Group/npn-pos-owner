@@ -1,7 +1,7 @@
 'use client'
 import React from 'react'
 import {useState} from 'react'
-import {Table,TableProps} from '../types/table.type'
+import {Table,TableProps} from '../types/table'
 const Tablecomponent: React.FC<TableProps> = ({Tables, isActive, onClick}) => {
 
   return (
