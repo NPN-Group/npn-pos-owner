@@ -14,7 +14,6 @@ export function useLogin() {
             return authService.login(data);
         },
         onSuccess: ({ data }) => {
-            console.log("Login successful", data);
             setUser(data.user);
             router.push("/");
         },

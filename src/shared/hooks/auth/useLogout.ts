@@ -10,12 +10,10 @@ const useLogout = () => {
     return useMutation({
         mutationFn: () => authService.logout(),
         onSuccess: (data) => {
-            console.log('Logout successful:', data.message);
             setUser(null);
             router.replace('/login');
         },
         onError: (error) => {
-            console.error('Logout failed:', error);
             setUser(null);
             router.replace('/login');
         },

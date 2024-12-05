@@ -11,9 +11,8 @@ export function useRegister() {
     const { setUser } = useAuth();
 
     const mutation = useMutation<APIResponse<AuthResponse>, Error, TRegister>({
-        mutationFn: (data: TRegister) => authService.register(data),
+        mutationFn: async (data: TRegister) => authService.register(data),
         onSuccess: (data) => {
-            console.log("User registered successfully", data);
             setUser(data.data.user);
             router.push("/");
         },
