@@ -5,6 +5,7 @@ import { useState } from "react";
 import { ZodError } from "zod";
 import { RegisterSchema, TRegister, TError } from "@/shared/types";
 import { InputField } from "@/shared/components";
+import { useRegister } from "@/shared/hooks/auth";
 
 export default function Register() {
     const [mailFocused, setMailFocused] = useState(false);
@@ -23,20 +24,18 @@ export default function Register() {
         confirmPassword: "",
     });
 
+    const { mutate: register } = useRegister();
+
     const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         setErrors({ email: "", password: "", confirmPassword: "" });
         try {
-            RegisterSchema.parse(formData);
-
-            setFormData({ email: "", password: "", confirmPassword: "" });
-            setErrors({ email: "", password: "", confirmPassword: "" });
-
-            console.log("Form submitted successfully");
+            const data = RegisterSchema.parse(formData);
+            register(data);
         } catch (err) {
             if (err instanceof ZodError) {
-                const newErrors: TError = { email: "", password: "", confirmPassword: "" };
+                const newErrors: TError = { email: "", password: "", confirmPassword: "", };
 
                 err.errors.forEach((error) => {
                     if (error.path[0] === "email") {

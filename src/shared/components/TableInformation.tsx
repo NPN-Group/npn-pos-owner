@@ -2,7 +2,7 @@ import React from 'react'
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import TimerSharpIcon from '@mui/icons-material/TimerSharp';
 import GroupsSharpIcon from '@mui/icons-material/GroupsSharp';
-import {Table, TableProps} from '../types/table.type';
+import {Table, TableProps} from '../types/table';
 const TableInformation:React.FC<TableProps> = ({Tables,onClick}) =>{
     const ExitButton = () => {
         console.log("exit");

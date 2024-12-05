@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import HomeIcon from '@mui/icons-material/Home';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import BorderAllRoundedIcon from '@mui/icons-material/BorderAllRounded';
@@ -8,6 +8,7 @@ import LocalDiningRoundedIcon from '@mui/icons-material/LocalDiningRounded';
 import SettingsTwoToneIcon from '@mui/icons-material/SettingsTwoTone';
 import DescriptionRoundedIcon from '@mui/icons-material/DescriptionRounded';
 import TableRestaurantOutlinedIcon from '@mui/icons-material/TableRestaurantOutlined';
+import useLogout from "@/shared/hooks/auth/useLogout";
 
 type SidebarProps = {
     isMenuOpen: boolean;
@@ -15,7 +16,6 @@ type SidebarProps = {
 
 export default function Sidebar({ isMenuOpen }: SidebarProps) {
     const pathname = usePathname();
-    const { replace } = useRouter();
     const getLinkClass = (path: string) => {
         const baseClass = `flex items-center gap-1 py-3 ${isMenuOpen ? "px-3" : "justify-center"} font-medium hover:ease-in-out hover:transition-all hover:cursor-pointer`;
         const activeClass = "bg-[#F5533D] text-white";
@@ -24,6 +24,8 @@ export default function Sidebar({ isMenuOpen }: SidebarProps) {
             ? `${baseClass} ${activeClass}`
             : `${baseClass} ${inactiveClass}`;
     };
+
+    const { mutate: logout } = useLogout();
 
     return (
         <aside className={`bg-white transition-[width] ease-in-out duration-300 ${isMenuOpen ? "w-48" : "w-12"} max-w-[250px]`} style={{ height: "calc(100vh - 3rem)", scrollbarWidth: "thin", scrollbarColor: "#F5533D transparent" }}>
@@ -54,7 +56,7 @@ export default function Sidebar({ isMenuOpen }: SidebarProps) {
                 </Link>
 
             </ul>
-            <ul onClick={() => { replace("/login") }} className="flex items-center justify-center place-items-center bg-[#e0e0e0] py-3 px-6 gap-1 text-black border-t-2 hover:bg-red-500 hover:text-white font-medium hover:ease-in-out hover:transition-all hover:cursor-pointer mt-auto">
+            <ul onClick={() => logout()} className="flex items-center justify-center place-items-center bg-[#e0e0e0] py-3 px-6 gap-1 text-black border-t-2 hover:bg-red-500 hover:text-white font-medium hover:ease-in-out hover:transition-all hover:cursor-pointer mt-auto">
                 <ExitToAppIcon />
                 {isMenuOpen && <li className="text-left bg-inherit border-none hover:border-none p-0">
                     Logout
