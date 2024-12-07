@@ -1,5 +1,3 @@
-"use client";
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import NotificationsIcon from '@mui/icons-material/Notifications';
@@ -12,15 +10,8 @@ type HeaderProps = {
 
 export default function Header({ onMenuToggle }: HeaderProps) {
     const { user } = useAuth();
-    const [avatarImage, setAvatarImage] = useState<string>("/assets/avatar.jpg");
-    useEffect(() => {
-        if (user?.img) {
-            setAvatarImage(`${process.env.NEXT_PUBLIC_ENV}/attachments/${user.img}`);
-        } else {
-            setAvatarImage("/assets/avatar.jpg");
-        }
-    }, [user]);
-
+    const BASE_AVATAR = "/assets/avatar.jpg";
+    const avatarImage = user?.img ? `${process.env.NEXT_PUBLIC_ENV}/attachments/${user.img}` : BASE_AVATAR;
     return (
         <header className="w-full bg-[#f7f7f7] flex flex-1 items-center justify-between px-3 py-4 max-h-12 h-full">
             <div className="flex items-center space-x-4">
