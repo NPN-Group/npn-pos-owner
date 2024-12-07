@@ -1,7 +1,9 @@
 'use client';
-import { useState } from "react";
+
+import { useEffect, useState } from "react";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
+
 interface LayoutProps {
     children: React.ReactNode;
     className?: string;
@@ -10,8 +12,20 @@ interface LayoutProps {
 export default function MainLayout({ children, className }: LayoutProps) {
     const [isMenuOpen, setIsMenuOpen] = useState(true);
     const handleMenuToggle = () => {
-        setIsMenuOpen(!isMenuOpen);
-    }
+        setIsMenuOpen(prevState => {
+            const newState = !prevState;
+            window.localStorage.setItem("isMenuOpen", JSON.stringify(newState));
+            return newState;
+        });
+    };
+
+    useEffect(() => {
+        const isMenuOpen = window.localStorage.getItem("isMenuOpen");
+        if (isMenuOpen !== null) {
+            setIsMenuOpen(JSON.parse(isMenuOpen));
+        }
+    }, []);
+
     return (
         <div className="flex flex-col h-screen">
             <Header onMenuToggle={handleMenuToggle} />
