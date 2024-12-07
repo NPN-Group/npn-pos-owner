@@ -3,8 +3,6 @@ import axios, { AxiosError } from "axios";
 import { APIResponse } from "./shared/controllers";
 import { UserResponse } from "./shared/types";
 
-const API_ENDPOINT = "http://localhost:3000";
-
 export default async function middleware(req: NextRequest) {
   if (req.nextUrl.pathname === "/login" || req.nextUrl.pathname === "/register") {
     return NextResponse.next();
@@ -13,7 +11,7 @@ export default async function middleware(req: NextRequest) {
   const cookies = req.cookies;
 
   try {
-    const response = await axios.get<APIResponse<UserResponse>>(`${API_ENDPOINT}/api/users/me`, {
+    const response = await axios.get<APIResponse<UserResponse>>(`${process.env.NEXT_PUBLIC_ENV}/api/users/me`, {
       headers: {
         Cookie: cookies.toString(),
       },
@@ -29,7 +27,7 @@ export default async function middleware(req: NextRequest) {
     });
   } catch (error: unknown) {
     try {
-      const refreshResponse = await axios.post(`${API_ENDPOINT}/api/auth/refresh-token`, {}, {
+      const refreshResponse = await axios.post(`${process.env.NEXT_PUBLIC_ENV}/api/auth/refresh-token`, {}, {
         headers: {
           Cookie: cookies.toString(),
         },
