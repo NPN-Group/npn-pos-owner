@@ -23,7 +23,7 @@ export const MenuComponent: React.FC<MenucomponentProps> = ({ menus }) => {
 }
 const Order:React.FC<OrderProps> = ({Orders,tableId}) => {
     return (
-        <div className=' ml-10 h-[500px] overflow-scroll pr-10 shadow-md mt-5 '>
+        <div className=' min-w-[400px] ml-10 h-[500px] overflow-scroll pr-10 shadow-md mt-5 '>
             <div className=' flex justify-between pb-5' >
                 <div className='flex justify-start gap-2 '>
                     <div className='flex flex-col items-center font-semibold bg-[#f8543c] py-2 px-1 text-white'>

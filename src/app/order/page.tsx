@@ -192,7 +192,7 @@ function page() {
             <div className={` px-2 py-2 hover:cursor-pointer ${filtered === "Cancelled" ? "bg-[#f8543c] text-white" : "bg-white"}`} onClick={() => {filteredOption("Cancelled")}}>Cancelled</div>
         </div>
         
-        <div className="grid grid-cols-2">
+        <div className="grid  grid-cols-1 lg:grid-cols-2">
           {mockOrders.map((order, index) => (
             <Order key={order.id} Orders={order} tableId={index + 1} />
           ))}
