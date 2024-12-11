@@ -1,7 +1,6 @@
 "use client";
 import { MainLayout } from "@/shared/components";
 import LocalDiningRoundedIcon from "@mui/icons-material/LocalDiningRounded";
-import EditNoteIcon from "@mui/icons-material/EditNote";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import {
   Dialog,
@@ -113,6 +112,7 @@ export default function MenuPage(): JSX.Element {
   const [isCategoryModalOpen, setCategoryModalOpen] = useState<boolean>(false);
   const [isFoodModalOpen, setFoodModalOpen] = useState<boolean>(false);
   const [newCategoryName, setNewCategoryName] = useState<string>("");
+  const [editingFood, setEditingFood] = useState<FoodItem | null>(null);
   const [newFood, setNewFood] = useState<NewFood>({
     name: "",
     img: null,
@@ -120,6 +120,49 @@ export default function MenuPage(): JSX.Element {
     price: "",
     description: "",
   });
+
+  const handleOpenFoodModal = (food?: FoodItem): void => {
+    if (food) {
+      // Edit existing food
+      setEditingFood(food);
+      setNewFood({
+        name: food.name,
+        img: null,
+        category: catagory.find((cat) =>
+          cat.foods.find((f) => f.name === food.name)
+        )?.name || "",
+        price: food.price.replace("$", ""),
+        description: food.description,
+      });
+    } else {
+      // Add new food
+      setEditingFood(null);
+      setNewFood({
+        name: "",
+        img: null,
+        category: "",
+        price: "",
+        description: "",
+      });
+    }
+    setFoodModalOpen(true);
+  };
+
+  const handleCloseFoodModal = (): void => {
+    setEditingFood(null);
+    setFoodModalOpen(false);
+  };
+
+  const handleSaveFood = () => {
+    if (validateFields()) {
+      if (editingFood) {
+        console.log("Food Edited:", newFood);
+      } else {
+        console.log("New Food Added:", newFood);
+      }
+      handleCloseFoodModal();
+    }
+  };
 
   const [errors, setErrors] = useState({
     name: false,
@@ -140,9 +183,6 @@ export default function MenuPage(): JSX.Element {
   const handleOpenCategoryModal = (): void => setCategoryModalOpen(true);
   const handleCloseCategoryModal = (): void => setCategoryModalOpen(false);
 
-  const handleOpenFoodModal = (): void => setFoodModalOpen(true);
-  const handleCloseFoodModal = (): void => setFoodModalOpen(false);
-
   const handleAddCategory = (): void => {
     if (newCategoryName.trim() !== "") {
       console.log("New Category Added:", newCategoryName);
@@ -150,20 +190,7 @@ export default function MenuPage(): JSX.Element {
       handleCloseCategoryModal();
     }
   };
-
-  const handleAddFood = () => {
-    if (validateFields()) {
-      console.log("New Food Added:", newFood);
-      setNewFood({
-        name: "",
-        img: null,
-        category: "",
-        price: "",
-        description: "",
-      });
-    }
-  };
-
+  
   return (
     <MainLayout className="flex-1 p-4 overflow-y-auto">
       <div className="flex gap-4 text-lg">
@@ -177,9 +204,14 @@ export default function MenuPage(): JSX.Element {
             <div className="flex justify-between">
               <div className="text-lg font-semibold">{item.name}</div>
             </div>
-            <div className="grid grid-cols-1 gap-4 mt-4">
+            <div key={item.name} className="grid grid-cols-1 gap-4 mt-4">
               {item.foods.map((food) => (
-                <div key={food.name} className="flex gap-4">
+                <div
+                className="flex gap-4 cursor-pointer"
+                onClick={() => {
+                  handleOpenFoodModal(food); // Pass the food item to the function
+                }}
+              >
                   <img
                     src={food.img || ""}
                     alt={food.name}
@@ -196,7 +228,9 @@ export default function MenuPage(): JSX.Element {
               ))}
             </div>
             <div className="flex gap-4">
-              <div className="m-8 cursor-pointer" onClick={handleOpenFoodModal}>
+              <div className="m-8 cursor-pointer" 
+              onClick={() => handleOpenFoodModal()}
+              >
                 <AddCircleOutlineIcon className="w-8 h-8 object-cover rounded-lg text-sm text-[#F5533D] transition-transform duration-300 ease-in-out hover:scale-125" />
               </div>
               <div className="flex justify-center items-center">
@@ -237,39 +271,49 @@ export default function MenuPage(): JSX.Element {
             value={newCategoryName}
             onChange={(e) => setNewCategoryName(e.target.value)}
             InputLabelProps={{
-                style: { color: "grey" },
-              }}
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": { borderColor: "#F5533D" },
-                  "&:hover fieldset": { borderColor: "#F5533D" },
-                  "&.Mui-focused fieldset": { borderColor: "#F5533D" },
-                },
-              }}
-  
+              style: { color: "grey" },
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": { borderColor: "#F5533D" },
+                "&:hover fieldset": { borderColor: "#F5533D" },
+                "&.Mui-focused fieldset": { borderColor: "#F5533D" },
+              },
+            }}
           />
           <div className="flex justify-end mt-4">
             <Button onClick={handleCloseCategoryModal} color="error">
               Cancel
             </Button>
-            <Button onClick={handleAddCategory} variant="contained" className="bg-[#F5533D]">
+            <Button
+              onClick={handleAddCategory}
+              variant="contained"
+              sx={{
+                backgroundColor: "#F5533D",
+                "&:hover": {
+                  backgroundColor: "#D24434",
+                },
+              }}
+            >
               Add
             </Button>
           </div>
         </DialogContent>
       </Dialog>
 
-      <Dialog
+       {/* Add/Edit Food Modal */}
+       <Dialog
         open={isFoodModalOpen}
         onClose={handleCloseFoodModal}
         fullWidth
         maxWidth="sm"
       >
-        <DialogTitle>Add New Food</DialogTitle>
+        <DialogTitle>
+          {editingFood ? "Edit Food Item" : "Add New Food"}
+        </DialogTitle>
         <DialogContent>
           <TextField
             size="small"
-            autoFocus
             margin="dense"
             label="Name"
             type="text"
@@ -279,73 +323,14 @@ export default function MenuPage(): JSX.Element {
             onChange={(e) => setNewFood({ ...newFood, name: e.target.value })}
             error={errors.name}
             helperText={errors.name && "Name is required"}
-            InputLabelProps={{
-                style: { color: "grey" },
-              }}
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": { borderColor: "#F5533D" },
-                  "&:hover fieldset": { borderColor: "#F5533D" },
-                  "&.Mui-focused fieldset": { borderColor: "#F5533D" },
-                },
-              }}
-          />
-
-          <Button
-            variant="outlined"
-            component="label"
-            sx={{ marginTop: "10px", color: "#F5533D", borderColor: "#F5533D" }}
-          >
-            Upload Image (Optional)
-            <input
-              type="file"
-              hidden
-              onChange={(e) => {
-                const files = e.target.files;
-                if (files && files.length > 0) {
-                  setNewFood((prev) => ({
-                    ...prev,
-                    img: files[0],
-                  }));
-                }
-              }}
-            />
-          </Button>
-
-          <TextField
-            select
-            size="small"
-            margin="dense"
-            fullWidth
-            required
-            value={newFood.category}
-            onChange={(e) =>
-              setNewFood({ ...newFood, category: e.target.value })
-            }
-            error={errors.category}
-            helperText={errors.category && "Category is required"}
-            SelectProps={{
-              native: true,
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": { borderColor: "#F5533D" },
+                "&:hover fieldset": { borderColor: "#F5533D" },
+                "&.Mui-focused fieldset": { borderColor: "#F5533D" },
+              },
             }}
-            InputLabelProps={{
-                style: { color: "grey" },
-              }}
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": { borderColor: "#F5533D" },
-                  "&:hover fieldset": { borderColor: "#F5533D" },
-                  "&.Mui-focused fieldset": { borderColor: "#F5533D" },
-                },
-              }}
-          >
-            <option value="" disabled>
-              Select a category
-            </option>
-            <option value="Main course">Main course</option>
-            <option value="Appetizers">Appetizers</option>
-            <option value="Beverages">Beverages</option>
-            <option value="Desserts">Desserts</option>
-          </TextField>
+          />
 
           <TextField
             size="small"
@@ -360,16 +345,13 @@ export default function MenuPage(): JSX.Element {
             }
             error={errors.price}
             helperText={errors.price && "Price is required"}
-            InputLabelProps={{
-                style: { color: "grey" },
-              }}
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": { borderColor: "#F5533D" },
-                  "&:hover fieldset": { borderColor: "#F5533D" },
-                  "&.Mui-focused fieldset": { borderColor: "#F5533D" },
-                },
-              }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": { borderColor: "#F5533D" },
+                "&:hover fieldset": { borderColor: "#F5533D" },
+                "&.Mui-focused fieldset": { borderColor: "#F5533D" },
+              },
+            }}
           />
 
           <TextField
@@ -384,27 +366,29 @@ export default function MenuPage(): JSX.Element {
             onChange={(e) =>
               setNewFood({ ...newFood, description: e.target.value })
             }
-            InputLabelProps={{
-                style: { color: "grey" },
-              }}
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": { borderColor: "#F5533D" },
-                  "&:hover fieldset": { borderColor: "#F5533D" },
-                  "&.Mui-focused fieldset": { borderColor: "#F5533D" },
-                },
-              }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": { borderColor: "#F5533D" },
+                "&:hover fieldset": { borderColor: "#F5533D" },
+                "&.Mui-focused fieldset": { borderColor: "#F5533D" },
+              },
+            }}
           />
           <div className="flex justify-end mt-4">
             <Button onClick={handleCloseFoodModal} color="error">
               Cancel
             </Button>
             <Button
-              onClick={handleAddFood}
+              onClick={handleSaveFood}
               variant="contained"
-              className="ml-2 bg-[#F5533D]"
+              sx={{
+                backgroundColor: "#F5533D",
+                "&:hover": {
+                  backgroundColor: "#D24434",
+                },
+              }}
             >
-              Add
+              {editingFood ? "Save Changes" : "Add"}
             </Button>
           </div>
         </DialogContent>
