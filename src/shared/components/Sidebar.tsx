@@ -11,6 +11,7 @@ import TableRestaurantOutlinedIcon from '@mui/icons-material/TableRestaurantOutl
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import { ShopParams } from "@/shared/types";
 import { logout } from "@/shared/services";
+import toast from "react-hot-toast";
 
 type SidebarProps = {
     isMenuOpen: boolean;
@@ -30,9 +31,24 @@ export default function Sidebar({ isMenuOpen }: SidebarProps) {
 
     const { replace } = useRouter();
     const handleLogout = async () => {
-        const { message } = await logout();
-        console.log(message);
-        replace("/login");
+        try {
+            const { message, statusCode } = await logout();
+            console.log(message);
+            if (statusCode === 200) {
+                toast.success(message);
+            } else {
+                toast.error(message);
+            }
+        } catch (err) {
+            console.error(err)
+            if (err instanceof Error) {
+                toast.error(err.message);
+            } else {
+                toast.error("An error occurred");
+            }
+        } finally {
+            replace("/login");
+        }
     }
 
     return (

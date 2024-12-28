@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import "./globals.css";
+import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "@/shared/providers";
 
 export const metadata: Metadata = {
@@ -30,6 +31,7 @@ export default async function RootLayout({
     <html lang="en">
       <body>
         <AuthProvider initialUser={user}>
+          <Toaster />
           {children}
         </AuthProvider>
       </body>

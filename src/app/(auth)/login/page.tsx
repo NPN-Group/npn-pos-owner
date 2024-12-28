@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { TLogin, TError } from "@/shared/types"
 import { InputField } from "@/shared/components";
 import { useAuth } from "@/shared/hooks";
@@ -20,6 +21,7 @@ export default function Login() {
     const handleFocusChange = (field: string, isFocused: boolean) => {
         setFocused((prev) => ({ ...prev, [field]: isFocused }));
     };
+
     const { setUser } = useAuth()
     const { replace } = useRouter();
 
@@ -40,30 +42,29 @@ export default function Login() {
                     password: data?.password!
                 });
                 setErrors(errors);
+
+                toast.error("Validation error");
                 return;
             }
 
             if (response?.statusCode === 200) {
-                console.log("Success");
-                console.log(response?.message);
-                console.log(response?.data);
-
-                // toast success message
+                toast.success("Login successful");
                 setUser(response?.data);
                 replace("/select-shop");
 
             } else {
-                console.log("Failed");
                 console.log(response?.message);
-                console.log(response?.data);
-
-                // toast error message
+                console.log(response?.error);
+                toast.error(response?.message || "An error occurred");
             }
 
         } catch (err) {
             console.error(err);
-
-            // toast error message
+            if (err instanceof Error) {
+                toast.error(err.message);
+            } else {
+                toast.error("An error occurred");
+            }
         }
     };
 
@@ -108,7 +109,7 @@ export default function Login() {
                     </section>
                     <button
                         type="submit"
-                        className="bg-[#F5533D] text-white font-bold text-xl rounded max-w-[20rem] w-[95%] mx-auto py-2 px-4 hover:bg-[#F5533D] hover:opacity-75"
+                        className="bg-[#F5533D] text-white font-bold text-xl rounded max-w-[20rem] w-[95%] mx-auto py-2 px-4 hover:bg-[#F5533D] hover:opacity-75 active:bg-opacity-90"
                     >
                         Log in
                     </button>

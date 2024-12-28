@@ -1,8 +1,10 @@
 "use client";
+
 import { useState } from "react";
 import { CreateShopFormButton, DragAndDropImageUpload, InputField } from "@/shared/components";
 import { TCreateShop, TError, TFocused } from "@/shared/types";
 import { CreateShopAction } from "@/shared/actions";
+import toast from "react-hot-toast";
 
 export type CreateShopFormProps = {
     onClose: () => void;
@@ -41,19 +43,31 @@ export default function CreateShopForm({ onClose }: CreateShopFormProps) {
                     location: response.data?.location!,
                     shopImageFile: response.data?.shopImageFile!,
                 })
+
+                toast.error("Validation error");
             } else {
-                console.log("Shop created successfully.");
-                onClose();
+                const { statusCode, message } = response.response!;
+                if (statusCode === 201) {
+                    toast.success(message);
+                    onClose();
+                } else {
+                    toast.error(message);
+                }
             }
         } catch (err) {
             console.error(err);
+            if (err instanceof Error) {
+                toast.error(err.message);
+            } else {
+                toast.error("An error occurred");
+            }
         }
     };
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
             <div className="bg-[#F9FAFB] rounded-lg shadow-lg h-[90%] max-w-[36rem] w-[90%] flex flex-col justify-center gap-2">
-                <h3 className="text-2xl font-semibold text-center text-gray-800">New Shop</h3>
+                <h3 className="text-2xl font-semibold text-center text-gray-800 py-2">New Shop</h3>
                 <form onSubmit={handleFormSubmission} className="flex flex-col h-full overflow-y-auto" encType="multipart/form-data">
                     <div className="flex flex-col gap-8 py-4 h-[90%] overflow-y-auto">
                         <DragAndDropImageUpload

@@ -6,6 +6,7 @@ import { useState } from "react";
 import { TRegister, TError, TFocused } from "@/shared/types";
 import { InputField } from "@/shared/components";
 import { registerAction } from "@/shared/actions";
+import toast from "react-hot-toast";
 
 export default function Register() {
     const { replace } = useRouter();
@@ -49,29 +50,30 @@ export default function Register() {
                     confirmPassword: data?.confirmPassword!,
                 });
                 setErrors(errors);
+                toast.error("Validation error");
                 return;
             }
 
             if (response?.statusCode === 201) {
-                console.log("Success");
-                console.log(response?.message);
                 console.log(response?.data);
 
-                // add toast success message
-
+                toast.success(response?.message);
                 replace("/select-shop");
             } else {
-                console.log("Error");
                 console.log(response?.message);
                 console.log(response?.error);
 
                 // add toast error message
+                toast.error(response?.message || "An error occurred");
             }
 
         } catch (err) {
             console.log(err);
-
-            // add toast error message
+            if (err instanceof Error) {
+                toast.error(err.message);
+            } else {
+                toast.error("An error occurred");
+            }
         }
     };
 

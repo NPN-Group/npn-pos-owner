@@ -144,7 +144,7 @@ export default function DragAndDropImageUpload({
             )}
 
             {localError && (
-                <p className="mt-4 text-red-500 text-center w-[70%] mx-auto p-2 bg-red-100 rounded-lg">
+                <p className="text-red-500 text-center w-[70%] mx-auto p-2 bg-red-100 rounded-lg">
                     {localError}
                 </p>
             )}
