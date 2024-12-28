@@ -1,10 +1,11 @@
-import React from 'react'
-import { Orders,OrderProps,Menu } from '../types/order'
-import Dropdown from './DropDown';
+import { OrderProps, Menu } from '@/shared/types'
+import { Dropdown } from '@/shared/components';
+
 interface MenucomponentProps {
-    menus:Menu;
+    menus: Menu;
 }
-export const MenuComponent: React.FC<MenucomponentProps> = ({ menus }) => {
+
+export function MenuComponent({ menus }: MenucomponentProps) {
     return (
         <div className='flex justify-between items-center my-3'>
             <div className='flex justify-start gap-2 '>
@@ -21,7 +22,8 @@ export const MenuComponent: React.FC<MenucomponentProps> = ({ menus }) => {
         </div>
     );
 }
-const Order:React.FC<OrderProps> = ({Orders,tableId}) => {
+
+export default function Order({ Orders, tableId }: OrderProps) {
     return (
         <div className=' min-w-[400px] ml-10 h-[500px] overflow-scroll pr-10 shadow-md mt-5 '>
             <div className=' flex justify-between pb-5' >
@@ -39,11 +41,10 @@ const Order:React.FC<OrderProps> = ({Orders,tableId}) => {
                 </div>
                 <Dropdown />
             </div>
-            <hr className='border-dashed border-[1.5px] border-black'/>
+            <hr className='border-dashed border-[1.5px] border-black' />
             {Orders.menus.map((menu, index) => (
                 <MenuComponent key={index} menus={menu} />
             ))}
         </div>
     )
 }
-export default Order

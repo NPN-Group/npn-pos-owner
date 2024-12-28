@@ -1,5 +1,5 @@
-'use client'
-import React, { useState, ChangeEvent, FormEvent } from 'react';
+"use client";
+import { useState, ChangeEvent, FormEvent } from 'react';
 import Link from "next/link";
 import Image from "next/image";
 import EastIcon from '@mui/icons-material/East';
@@ -19,9 +19,9 @@ type Errors = {
   cvv?: string;
 };
 interface PaymentProps {
-    totalPrice:number;
+  totalPrice: number;
 }
-const PaymentMethod: React.FC<PaymentProps> = ({totalPrice}) => {
+export default function PaymentMethod({ totalPrice }: PaymentProps) {
   const [formData, setFormData] = useState<FormData>({
     name: '',
     cardNumber: '',
@@ -36,12 +36,12 @@ const PaymentMethod: React.FC<PaymentProps> = ({totalPrice}) => {
     setFormData({ ...formData, [id]: value });
     setErrors({ ...errors, [id]: undefined }); // Clear error as user types
   };
-  
-  const validateCVV = (cvv:string): boolean => {
+
+  const validateCVV = (cvv: string): boolean => {
     const isValid = /^\d{3}$/.test(cvv);
     return isValid;
   }
-  
+
   const validateExpiration = (expiration: string): boolean => {
     const regex = /^(0[1-9]|1[0-2])\/\d{2}$/;
     return regex.test(expiration);
@@ -51,7 +51,7 @@ const PaymentMethod: React.FC<PaymentProps> = ({totalPrice}) => {
     const regex = /^(\d{4} ){3}\d{4}$/;
     return regex.test(cardNumber);
   };
-  
+
   const validateFields = (): boolean => {
     const newErrors: Errors = {};
 
@@ -63,20 +63,20 @@ const PaymentMethod: React.FC<PaymentProps> = ({totalPrice}) => {
 
     if (!formData.cardNumber.trim()) {
       newErrors.cardNumber = "Card number is required.";
-    } else if (validateCardNumber(formData.cardNumber) == false){
+    } else if (validateCardNumber(formData.cardNumber) == false) {
       newErrors.cardNumber = "Card number is Invalid";
     }
 
     if (!formData.expiration.trim()) {
       newErrors.expiration = "Expiration date is required.";
-    } else if (validateExpiration(formData.expiration) == false){
-        newErrors.expiration = "Expiration date is Invalid";
+    } else if (validateExpiration(formData.expiration) == false) {
+      newErrors.expiration = "Expiration date is Invalid";
     }
 
     if (!formData.cvv.trim()) {
       newErrors.cvv = "CVV is required.";
-    }else if (validateCVV(formData.cvv) == false){
-        newErrors.cvv = "CVV is Invalid";
+    } else if (validateCVV(formData.cvv) == false) {
+      newErrors.cvv = "CVV is Invalid";
     }
 
     setErrors(newErrors);
@@ -99,13 +99,13 @@ const PaymentMethod: React.FC<PaymentProps> = ({totalPrice}) => {
       <div className='mx-5 pb-3 text-black font-normal'>Card type</div>
       <div className='flex mx-5 justify-around px-10'>
         <Link href='#'>
-          <Image src="/assets/masterCard.svg" alt='masterCard' width={60} height={60} className='shadow-md border-1'/>
+          <Image src="/assets/masterCard.svg" alt='masterCard' width={60} height={60} className='shadow-md border-1' />
         </Link>
         <Link href='#'>
-          <Image src="/assets/Visa.svg" alt='Visa' width={60} height={60} className='shadow-md border-1'/>
+          <Image src="/assets/Visa.svg" alt='Visa' width={60} height={60} className='shadow-md border-1' />
         </Link>
         <Link href='#'>
-          <Image src="/assets/RuPay.svg" alt='RuPay' width={60} height={60} className='shadow-md border-1'/>
+          <Image src="/assets/RuPay.svg" alt='RuPay' width={60} height={60} className='shadow-md border-1' />
         </Link>
       </div>
       <div className='mx-5 font-normal text-black pb-2'>
@@ -189,5 +189,3 @@ const PaymentMethod: React.FC<PaymentProps> = ({totalPrice}) => {
     </form>
   );
 };
-
-export default PaymentMethod;

@@ -5,12 +5,22 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'http', 
+        protocol: 'http',
         hostname: 'localhost',
         port: process.env.SERVER_PORT || '3000',
-        pathname: '/attachments/**', 
+        pathname: '/attachments/**',
       },
     ],
+  },
+  logging: {
+    fetches: {
+      fullUrl: true,
+    }
+  },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '10mb',
+    }
   }
 };
 

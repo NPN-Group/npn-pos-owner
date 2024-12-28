@@ -1,9 +1,7 @@
-'use client'
-import { MainLayout } from "@/shared/components";
-import Tablecomponent from '@/shared/components/Table';
-import TableRestaurantOutlinedIcon from '@mui/icons-material/TableRestaurantOutlined';
+"use client";
 import { useState } from 'react';
-import TableInformation from "@/shared/components/TableInformation";
+import TableRestaurantOutlinedIcon from '@mui/icons-material/TableRestaurantOutlined';
+import { Table, TableInformation } from '@/shared/components';
 
 export default function Menu() {
   const [activeId, setActiveId] = useState<number | null>(null);
@@ -26,7 +24,7 @@ export default function Menu() {
     return <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 grid-flow-row pr-20 pl-40'>
 
       {tables.map((table) => (
-        <Tablecomponent
+        <Table
           key={table.id}
           Tables={table}
           isActive={activeId === table.id}
@@ -40,7 +38,7 @@ export default function Menu() {
       <div className="relative  ">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 grid-flow-row gap-0 w-[800px] ">
           {tables.map((table) => (
-            <Tablecomponent
+            <Table
               key={table.id}
               Tables={table}
               isActive={activeId === table.id}
@@ -61,13 +59,12 @@ export default function Menu() {
   };
 
   return (
-    <MainLayout className="flex-1 p-4 overflow-y-auto">
+    <>
       <div className="flex justify-start gap- px-5">
         <TableRestaurantOutlinedIcon className="text-[30px]" />
         <div className='text-[20px] font-semibold'> Table Layout</div>
       </div>
       {activeId === null ? renderOnlyTable() : renderWithInformation(activeId)}
-
-    </MainLayout>
+    </>
   )
 }

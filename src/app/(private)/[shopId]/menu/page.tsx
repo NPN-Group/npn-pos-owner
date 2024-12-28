@@ -1,5 +1,5 @@
 "use client";
-import { MainLayout } from "@/shared/components";
+import { useState } from "react";
 import LocalDiningRoundedIcon from "@mui/icons-material/LocalDiningRounded";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import {
@@ -9,7 +9,6 @@ import {
   TextField,
   Button,
 } from "@mui/material";
-import React, { useState } from "react";
 
 type FoodItem = {
   name: string;
@@ -108,7 +107,7 @@ type NewFood = {
   description: string;
 };
 
-export default function MenuPage(): JSX.Element {
+export default function MenuPage() {
   const [isCategoryModalOpen, setCategoryModalOpen] = useState<boolean>(false);
   const [isFoodModalOpen, setFoodModalOpen] = useState<boolean>(false);
   const [newCategoryName, setNewCategoryName] = useState<string>("");
@@ -190,28 +189,29 @@ export default function MenuPage(): JSX.Element {
       handleCloseCategoryModal();
     }
   };
-  
+
   return (
-    <MainLayout className="flex-1 p-4 overflow-y-auto">
+    <>
       <div className="flex gap-4 text-lg">
         <LocalDiningRoundedIcon />
         <div className="font-medium">Shop Name</div>
       </div>
 
       <div className="grid grid-cols-1 gap-4 mt-4 md:grid-cols-2 lg:grid-cols-3">
-        {catagory.map((item) => (
-          <div key={item.name} className="bg-white shadow-md rounded-lg p-4">
+        {catagory.map((item, index) => (
+          <div key={index} className="bg-white shadow-md rounded-lg p-4">
             <div className="flex justify-between">
               <div className="text-lg font-semibold">{item.name}</div>
             </div>
-            <div key={item.name} className="grid grid-cols-1 gap-4 mt-4">
-              {item.foods.map((food) => (
+            <div className="grid grid-cols-1 gap-4 mt-4">
+              {item.foods.map((food, index) => (
                 <div
-                className="flex gap-4 cursor-pointer"
-                onClick={() => {
-                  handleOpenFoodModal(food); // Pass the food item to the function
-                }}
-              >
+                  key={index}
+                  className="flex gap-4 cursor-pointer"
+                  onClick={() => {
+                    handleOpenFoodModal(food);
+                  }}
+                >
                   <img
                     src={food.img || ""}
                     alt={food.name}
@@ -228,8 +228,8 @@ export default function MenuPage(): JSX.Element {
               ))}
             </div>
             <div className="flex gap-4">
-              <div className="m-8 cursor-pointer" 
-              onClick={() => handleOpenFoodModal()}
+              <div className="m-8 cursor-pointer"
+                onClick={() => handleOpenFoodModal()}
               >
                 <AddCircleOutlineIcon className="w-8 h-8 object-cover rounded-lg text-sm text-[#F5533D] transition-transform duration-300 ease-in-out hover:scale-125" />
               </div>
@@ -301,8 +301,8 @@ export default function MenuPage(): JSX.Element {
         </DialogContent>
       </Dialog>
 
-       {/* Add/Edit Food Modal */}
-       <Dialog
+      {/* Add/Edit Food Modal */}
+      <Dialog
         open={isFoodModalOpen}
         onClose={handleCloseFoodModal}
         fullWidth
@@ -393,6 +393,6 @@ export default function MenuPage(): JSX.Element {
           </div>
         </DialogContent>
       </Dialog>
-    </MainLayout>
+    </>
   );
 }

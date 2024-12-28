@@ -1,10 +1,10 @@
 "use client";
 import { createContext } from 'react';
-import { UserResponse } from '@/shared/types';
+import { User } from '@/shared/types';
 
-interface AuthContextType {
-    user: UserResponse | null;
-    setUser: (user: UserResponse | null) => void;
+interface AuthContext {
+    user?: User;
+    setUser: (user?: User) => void;
 }
 
-export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContext>(null!);

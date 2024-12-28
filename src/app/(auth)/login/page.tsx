@@ -1,11 +1,14 @@
 "use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { ZodError } from "zod";
-import { LoginSchema, TLogin, TError } from "@/shared/types"
+import toast from "react-hot-toast";
+import { TLogin, TError } from "@/shared/types"
 import { InputField } from "@/shared/components";
-import { useLogin } from "@/shared/hooks/auth";
+import { useAuth } from "@/shared/hooks";
+import { loginAction } from "@/shared/actions";
 
 export default function Login() {
     const [formData, setFormData] = useState<TLogin>({ email: "", password: "" });
@@ -19,7 +22,8 @@ export default function Login() {
         setFocused((prev) => ({ ...prev, [field]: isFocused }));
     };
 
-    const { mutate: login } = useLogin();
+    const { setUser } = useAuth()
+    const { replace } = useRouter();
 
     const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -27,22 +31,39 @@ export default function Login() {
         setErrors({ email: "", password: "" });
 
         try {
-            const data = LoginSchema.parse(formData);
-            login(data)
-        } catch (err) {
-            if (err instanceof ZodError) {
-                const newErrors: TError = { email: "", password: "" };
-
-                err.errors.forEach((error) => {
-                    if (error.path[0] === "email") {
-                        newErrors.email = error.message;
-                    }
-                    if (error.path[0] === "password") {
-                        newErrors.password = error.message;
-                    }
+            const formDataObj = new FormData();
+            formDataObj.append("email", formData.email);
+            formDataObj.append("password", formData.password);
+            const { data, errors, response } = await loginAction(formDataObj);
+            if (errors) {
+                setFormData({
+                    ...formData,
+                    email: data?.email!,
+                    password: data?.password!
                 });
+                setErrors(errors);
 
-                setErrors(newErrors);
+                toast.error("Validation error");
+                return;
+            }
+
+            if (response?.statusCode === 200) {
+                toast.success("Login successful");
+                setUser(response?.data);
+                replace("/select-shop");
+
+            } else {
+                console.log(response?.message);
+                console.log(response?.error);
+                toast.error(response?.message || "An error occurred");
+            }
+
+        } catch (err) {
+            console.error(err);
+            if (err instanceof Error) {
+                toast.error(err.message);
+            } else {
+                toast.error("An error occurred");
             }
         }
     };
@@ -88,7 +109,7 @@ export default function Login() {
                     </section>
                     <button
                         type="submit"
-                        className="bg-[#F5533D] text-white font-bold text-xl rounded max-w-[20rem] w-[95%] mx-auto py-2 px-4 hover:bg-[#F5533D] hover:opacity-75"
+                        className="bg-[#F5533D] text-white font-bold text-xl rounded max-w-[20rem] w-[95%] mx-auto py-2 px-4 hover:bg-[#F5533D] hover:opacity-75 active:bg-opacity-90"
                     >
                         Log in
                     </button>

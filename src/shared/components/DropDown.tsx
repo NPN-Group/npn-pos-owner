@@ -1,22 +1,22 @@
-'use client'
+"use client";
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { useState } from 'react'
+
 export default function Dropdown() {
-    const [status,setStatus] = useState<string>("Ready")
+  const [status, setStatus] = useState<string>("Ready")
   return (
     <Menu as="div" className="relative inline-block text-left ">
       <div>
-      <MenuButton
-          className={`inline-flex w-full justify-center gap-x-1.5 rounded-md px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300  ${
-            status === "Ready"
-              ? "bg-[#E3FFE4]"
-              : status === "In Process"
+        <MenuButton
+          className={`inline-flex w-full justify-center gap-x-1.5 rounded-md px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300  ${status === "Ready"
+            ? "bg-[#E3FFE4]"
+            : status === "In Process"
               ? "bg-[#FFEDBE]"
               : status === "Completed"
-              ? "bg-[#B2E8FF]"
-              : "bg-[#F48080]"
-          }`}
+                ? "bg-[#B2E8FF]"
+                : "bg-[#F48080]"
+            }`}
         >
           {status}
           <ChevronDownIcon aria-hidden="true" className="-mr-1 size-5 text-gray-400" />
@@ -29,28 +29,28 @@ export default function Dropdown() {
       >
         <div className="py-1">
           <MenuItem >
-            <div onClick={() => {setStatus("Ready")}}
+            <div onClick={() => { setStatus("Ready") }}
               className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:text-gray-900 data-[focus]:outline-none"
             >
               Ready
             </div>
           </MenuItem>
           <MenuItem>
-            <div onClick={() => {setStatus("In Process")}}
+            <div onClick={() => { setStatus("In Process") }}
               className={"block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:text-gray-900 data-[focus]:outline-none"}
             >
               In Process
             </div>
           </MenuItem>
           <MenuItem>
-            <div onClick={() => {setStatus("Completed")}}
+            <div onClick={() => { setStatus("Completed") }}
               className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:text-gray-900 data-[focus]:outline-none"
             >
               Completed
             </div>
           </MenuItem>
           <MenuItem>
-            <div onClick={() => {setStatus("Cancelled")}}
+            <div onClick={() => { setStatus("Cancelled") }}
               className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:text-gray-900 data-[focus]:outline-none"
             >
               Cancelled
