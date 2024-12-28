@@ -11,3 +11,8 @@ export { default as CreateShopFormButton } from "./CreateShopFormButton";
 export { default as DragAndDropImageUpload } from "./DragAndDropImageUpload";
 export { default as TableInformation } from "./TableInformation";
 export { default as Table } from "./Table";
+export { default as Order } from "./Order";
+export { default as Dropdown } from "./DropDown";
+export { default as Bill } from "./Bill";
+export { default as PaymentMethod } from "./PaymentMethod";
+

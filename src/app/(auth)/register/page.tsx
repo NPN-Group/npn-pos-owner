@@ -1,11 +1,11 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { TRegister, TError, TFocused } from "@/shared/types";
 import { InputField } from "@/shared/components";
 import { registerAction } from "@/shared/actions";
-import { useRouter } from "next/navigation";
 
 export default function Register() {
     const { replace } = useRouter();

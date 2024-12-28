@@ -21,7 +21,7 @@ export default function Menu() {
 
   ];
   const renderOnlyTable = () => {
-    return <div className='grid grid-cols-3 grid-flow-row pr-20 pl-40'>
+    return <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 grid-flow-row pr-20 pl-40'>
 
       {tables.map((table) => (
         <Table
@@ -35,8 +35,8 @@ export default function Menu() {
   }
   const renderWithInformation = (id: number) => {
     return (
-      <div className="relative ">
-        <div className="grid grid-cols-3 grid-flow-row gap-0 w-[800px]">
+      <div className="relative  ">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 grid-flow-row gap-0 w-[800px] ">
           {tables.map((table) => (
             <Table
               key={table.id}
@@ -47,7 +47,7 @@ export default function Menu() {
           ))}
         </div>
 
-        <div className="absolute top-1/2 right-20 transform -translate-y-1/2">
+        <div className=" lg:top-1/2 lg:right-20 lg:transform lg:-translate-y-1/2 top-[200px] md:-translate-x-[-50px] fixed ">
           <TableInformation Tables={tables[id - 1]} onClick={handleTableClick} />
         </div>
       </div>
