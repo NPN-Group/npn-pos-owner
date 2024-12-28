@@ -2,7 +2,7 @@ type InputFieldProps = {
     id: string;
     name: string;
     type: string;
-    value: string;
+    value?: string;
     label: string;
     error: string;
     focused: boolean;
@@ -48,7 +48,7 @@ export default function InputField({
                     onFocus={onFocus}
                     onBlur={onBlur}
                     placeholder=""
-                    className={`w-full py-2 px-4 text-lg placeholder:text-base focus:outline-2 rounded transition-all duration-300 ease-in-out ${error
+                    className={`w-full py-2 px-4 text-lg placeholder:text-base rounded transition-all duration-300 ease-in-out ${error
                         ? "border-[1px] border-red-500 py-2"
                         : "border-gray-300"
                         }`}

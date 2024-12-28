@@ -1,16 +1,24 @@
-'use client';
+"use client";
 
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 
 interface LayoutProps {
     children: React.ReactNode;
-    className?: string;
 }
 
-export default function MainLayout({ children, className }: LayoutProps) {
+export default function MainLayout({ children }: LayoutProps) {
     const [isMenuOpen, setIsMenuOpen] = useState(true);
+    const pathname = usePathname();
+    const pathparts = pathname.split("/");
+    let path = '';
+    if (pathparts.length == 2) {
+        path = pathparts[0];
+    } else if (pathparts.length == 3) {
+        path = pathparts[pathparts.length - 1];
+    }
     const handleMenuToggle = () => {
         setIsMenuOpen(prevState => {
             const newState = !prevState;
@@ -31,10 +39,10 @@ export default function MainLayout({ children, className }: LayoutProps) {
             <Header onMenuToggle={handleMenuToggle} />
             <div className="flex flex-1 overflow-hidden">
                 <Sidebar isMenuOpen={isMenuOpen} />
-                <main className={`${className}`}>
+                <main className="flex-1 p-4 overflow-y-auto space-y-6">
                     {children}
                 </main>
             </div>
         </div>
     );
-};
+}

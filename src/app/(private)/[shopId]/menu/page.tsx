@@ -1,7 +1,6 @@
 "use client";
-import { MainLayout } from "@/shared/components";
+import React, { useState } from "react";
 import LocalDiningRoundedIcon from "@mui/icons-material/LocalDiningRounded";
-import EditNoteIcon from "@mui/icons-material/EditNote";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import {
   Dialog,
@@ -10,7 +9,6 @@ import {
   TextField,
   Button,
 } from "@mui/material";
-import React, { useState } from "react";
 
 type FoodItem = {
   name: string;
@@ -165,7 +163,8 @@ export default function MenuPage(): JSX.Element {
   };
 
   return (
-    <MainLayout className="flex-1 p-4 overflow-y-auto">
+    // <MainLayout className="flex-1 p-4 overflow-y-auto">
+    <>
       <div className="flex gap-4 text-lg">
         <LocalDiningRoundedIcon />
         <div className="font-medium">Shop Name</div>
@@ -237,16 +236,16 @@ export default function MenuPage(): JSX.Element {
             value={newCategoryName}
             onChange={(e) => setNewCategoryName(e.target.value)}
             InputLabelProps={{
-                style: { color: "grey" },
-              }}
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": { borderColor: "#F5533D" },
-                  "&:hover fieldset": { borderColor: "#F5533D" },
-                  "&.Mui-focused fieldset": { borderColor: "#F5533D" },
-                },
-              }}
-  
+              style: { color: "grey" },
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": { borderColor: "#F5533D" },
+                "&:hover fieldset": { borderColor: "#F5533D" },
+                "&.Mui-focused fieldset": { borderColor: "#F5533D" },
+              },
+            }}
+
           />
           <div className="flex justify-end mt-4">
             <Button onClick={handleCloseCategoryModal} color="error">
@@ -280,15 +279,15 @@ export default function MenuPage(): JSX.Element {
             error={errors.name}
             helperText={errors.name && "Name is required"}
             InputLabelProps={{
-                style: { color: "grey" },
-              }}
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": { borderColor: "#F5533D" },
-                  "&:hover fieldset": { borderColor: "#F5533D" },
-                  "&.Mui-focused fieldset": { borderColor: "#F5533D" },
-                },
-              }}
+              style: { color: "grey" },
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": { borderColor: "#F5533D" },
+                "&:hover fieldset": { borderColor: "#F5533D" },
+                "&.Mui-focused fieldset": { borderColor: "#F5533D" },
+              },
+            }}
           />
 
           <Button
@@ -328,15 +327,15 @@ export default function MenuPage(): JSX.Element {
               native: true,
             }}
             InputLabelProps={{
-                style: { color: "grey" },
-              }}
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": { borderColor: "#F5533D" },
-                  "&:hover fieldset": { borderColor: "#F5533D" },
-                  "&.Mui-focused fieldset": { borderColor: "#F5533D" },
-                },
-              }}
+              style: { color: "grey" },
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": { borderColor: "#F5533D" },
+                "&:hover fieldset": { borderColor: "#F5533D" },
+                "&.Mui-focused fieldset": { borderColor: "#F5533D" },
+              },
+            }}
           >
             <option value="" disabled>
               Select a category
@@ -361,15 +360,15 @@ export default function MenuPage(): JSX.Element {
             error={errors.price}
             helperText={errors.price && "Price is required"}
             InputLabelProps={{
-                style: { color: "grey" },
-              }}
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": { borderColor: "#F5533D" },
-                  "&:hover fieldset": { borderColor: "#F5533D" },
-                  "&.Mui-focused fieldset": { borderColor: "#F5533D" },
-                },
-              }}
+              style: { color: "grey" },
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": { borderColor: "#F5533D" },
+                "&:hover fieldset": { borderColor: "#F5533D" },
+                "&.Mui-focused fieldset": { borderColor: "#F5533D" },
+              },
+            }}
           />
 
           <TextField
@@ -385,15 +384,15 @@ export default function MenuPage(): JSX.Element {
               setNewFood({ ...newFood, description: e.target.value })
             }
             InputLabelProps={{
-                style: { color: "grey" },
-              }}
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": { borderColor: "#F5533D" },
-                  "&:hover fieldset": { borderColor: "#F5533D" },
-                  "&.Mui-focused fieldset": { borderColor: "#F5533D" },
-                },
-              }}
+              style: { color: "grey" },
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": { borderColor: "#F5533D" },
+                "&:hover fieldset": { borderColor: "#F5533D" },
+                "&.Mui-focused fieldset": { borderColor: "#F5533D" },
+              },
+            }}
           />
           <div className="flex justify-end mt-4">
             <Button onClick={handleCloseFoodModal} color="error">
@@ -409,6 +408,7 @@ export default function MenuPage(): JSX.Element {
           </div>
         </DialogContent>
       </Dialog>
-    </MainLayout>
+    </>
+    // </MainLayout>
   );
 }

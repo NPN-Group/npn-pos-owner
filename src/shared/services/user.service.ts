@@ -1,8 +1,8 @@
-import { apiController, APIResponse } from "@/shared/controllers/api.controller";
-import { UserResponse } from "@/shared/types";
+import { APIResponse, User } from "@/shared/types";
+import { fetcher } from "../lib";
 
 export const UserService = {
-    fetchUser: async (): Promise<APIResponse<UserResponse>> => {
-        return apiController<null, UserResponse>("/users/me", "get");
-    },
+    fetchUser: async (): Promise<APIResponse<User>> => {
+        return fetcher<User>("users/me");
+    }
 }

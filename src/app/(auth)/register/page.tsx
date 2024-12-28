@@ -2,16 +2,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { ZodError } from "zod";
-import { RegisterSchema, TRegister, TError } from "@/shared/types";
+import { TRegister, TError, TFocused } from "@/shared/types";
 import { InputField } from "@/shared/components";
-import { useRegister } from "@/shared/hooks/auth";
+import { registerAction } from "@/shared/actions";
+import { useRouter } from "next/navigation";
 
 export default function Register() {
-    const [mailFocused, setMailFocused] = useState(false);
-    const [passwordFocused, setPasswordFocused] = useState(false);
-    const [confirmPasswordFocused, setConfirmPasswordFocused] = useState(false);
-
+    const { replace } = useRouter();
     const [formData, setFormData] = useState<TRegister>({
         email: "",
         password: "",
@@ -24,35 +21,58 @@ export default function Register() {
         confirmPassword: "",
     });
 
-    const { mutate: register } = useRegister();
+    const [focused, setFocused] = useState<TFocused>({
+        email: false,
+        password: false,
+        confirmPassword: false,
+    });
 
-    const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleFocusChange = (field: string, isFocused: boolean) => {
+        setFocused((prev) => ({ ...prev, [field]: isFocused }));
+    };
+
+    const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         setErrors({ email: "", password: "", confirmPassword: "" });
         try {
-            const data = RegisterSchema.parse(formData);
-            register(data);
-        } catch (err) {
-            if (err instanceof ZodError) {
-                const newErrors: TError = { email: "", password: "", confirmPassword: "", };
-
-                err.errors.forEach((error) => {
-                    if (error.path[0] === "email") {
-                        newErrors.email = error.message;
-                    }
-                    if (error.path[0] === "password") {
-                        newErrors.password = error.message;
-                    }
-                    if (error.path[0] === "confirmPassword") {
-                        newErrors.confirmPassword = error.message;
-                    }
+            const formDataObj = new FormData();
+            formDataObj.append("email", formData.email);
+            formDataObj.append("password", formData.password);
+            formDataObj.append("confirmPassword", formData.confirmPassword);
+            const { errors, data, response } = await registerAction(formDataObj);
+            if (errors) {
+                setFormData({
+                    ...formData,
+                    email: data?.email!,
+                    password: data?.password!,
+                    confirmPassword: data?.confirmPassword!,
                 });
-
-                setErrors(newErrors);
+                setErrors(errors);
+                return;
             }
-        }
 
+            if (response?.statusCode === 201) {
+                console.log("Success");
+                console.log(response?.message);
+                console.log(response?.data);
+
+                // add toast success message
+
+                replace("/select-shop");
+            } else {
+                console.log("Error");
+                console.log(response?.message);
+                console.log(response?.error);
+
+                // add toast error message
+            }
+
+        } catch (err) {
+            console.log(err);
+
+            // add toast error message
+        }
     };
 
     const handleInputChange = (field: string, value: string) => {
@@ -77,12 +97,12 @@ export default function Register() {
                             name="mail"
                             value={formData.email}
                             onChange={(value) => handleInputChange("email", value)}
-                            onFocus={() => setMailFocused(true)}
-                            onBlur={() => setMailFocused(false)}
+                            onFocus={() => handleFocusChange("email", true)}
+                            onBlur={() => handleFocusChange("email", false)}
                             className="max-w-[20rem] w-[95%] mx-auto border-[1px] rounded"
                             label="Email Address"
                             error={errors.email}
-                            focused={mailFocused}
+                            focused={focused.email}
                         />
 
                         <InputField
@@ -91,12 +111,12 @@ export default function Register() {
                             name="password"
                             value={formData.password}
                             onChange={(value) => handleInputChange("password", value)}
-                            onFocus={() => setPasswordFocused(true)}
-                            onBlur={() => setPasswordFocused(false)}
+                            onFocus={() => handleFocusChange("password", true)}
+                            onBlur={() => handleFocusChange("password", false)}
                             className="max-w-[20rem] w-[95%] mx-auto border-[1px] rounded"
                             label="Password"
                             error={errors.password}
-                            focused={passwordFocused}
+                            focused={focused.password}
                         />
 
                         <InputField
@@ -105,12 +125,12 @@ export default function Register() {
                             name="confirmPassword"
                             value={formData.confirmPassword}
                             onChange={(value) => handleInputChange("confirmPassword", value)}
-                            onFocus={() => setConfirmPasswordFocused(true)}
-                            onBlur={() => setConfirmPasswordFocused(false)}
+                            onFocus={() => handleFocusChange("confirmPassword", true)}
+                            onBlur={() => handleFocusChange("confirmPassword", false)}
                             className="max-w-[20rem] w-[95%] mx-auto border-[1px] rounded"
                             label="Confirm Password"
                             error={errors.confirmPassword}
-                            focused={confirmPasswordFocused}
+                            focused={focused.confirmPassword}
                         />
                     </section>
                     <button type="submit" className="bg-[#F5533D] text-white font-bold text-xl rounded max-w-[20rem] w-[95%] mx-auto py-2 px-4">

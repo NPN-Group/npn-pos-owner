@@ -1,16 +1,29 @@
-import { apiController, APIResponse } from "@/shared/controllers";
-import { AuthResponse, TLogin, TRegister } from "@/shared/types";
+import { APIResponse, TLogin, TRegister, User } from "@/shared/types";
+import { fetcherCSR } from "@/shared/lib";
+import { API_URL } from "@/shared/common/constants";
 
-export const authService = {
-    login: async (param: TLogin): Promise<APIResponse<AuthResponse>> => {
-        return apiController<TLogin, AuthResponse>("/auth/login", "post", param);
-    },
+export async function login(param: TLogin): Promise<APIResponse<User>> {
+    return fetcherCSR<User>(`${API_URL}/api/auth/login`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(param),
+    });
+}
 
-    register: async (param: TRegister): Promise<APIResponse<AuthResponse>> => {
-        return apiController<TRegister, AuthResponse>("/auth/register", "post", param);
-    },
+export async function register(param: TRegister): Promise<APIResponse<User>> {
+    return fetcherCSR<User>(`${API_URL}/api/auth/register`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(param),
+    });
+}
 
-    logout: async (): Promise<APIResponse<undefined>> => {
-        return apiController<null, undefined>("/auth/logout", "post");
-    },
+export async function logout(): Promise<APIResponse<undefined>> {
+    return fetcherCSR<undefined>(`${API_URL}/api/auth/logout`, {
+        method: "POST",
+    });
 }

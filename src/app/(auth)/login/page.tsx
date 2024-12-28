@@ -1,11 +1,13 @@
 "use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { ZodError } from "zod";
-import { LoginSchema, TLogin, TError } from "@/shared/types"
+import { TLogin, TError } from "@/shared/types"
 import { InputField } from "@/shared/components";
-import { useLogin } from "@/shared/hooks/auth";
+import { useAuth } from "@/shared/hooks";
+import { loginAction } from "@/shared/actions";
 
 export default function Login() {
     const [formData, setFormData] = useState<TLogin>({ email: "", password: "" });
@@ -18,8 +20,8 @@ export default function Login() {
     const handleFocusChange = (field: string, isFocused: boolean) => {
         setFocused((prev) => ({ ...prev, [field]: isFocused }));
     };
-
-    const { mutate: login } = useLogin();
+    const { setUser } = useAuth()
+    const { replace } = useRouter();
 
     const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -27,23 +29,41 @@ export default function Login() {
         setErrors({ email: "", password: "" });
 
         try {
-            const data = LoginSchema.parse(formData);
-            login(data)
-        } catch (err) {
-            if (err instanceof ZodError) {
-                const newErrors: TError = { email: "", password: "" };
-
-                err.errors.forEach((error) => {
-                    if (error.path[0] === "email") {
-                        newErrors.email = error.message;
-                    }
-                    if (error.path[0] === "password") {
-                        newErrors.password = error.message;
-                    }
+            const formDataObj = new FormData();
+            formDataObj.append("email", formData.email);
+            formDataObj.append("password", formData.password);
+            const { data, errors, response } = await loginAction(formDataObj);
+            if (errors) {
+                setFormData({
+                    ...formData,
+                    email: data?.email!,
+                    password: data?.password!
                 });
-
-                setErrors(newErrors);
+                setErrors(errors);
+                return;
             }
+
+            if (response?.statusCode === 200) {
+                console.log("Success");
+                console.log(response?.message);
+                console.log(response?.data);
+
+                // toast success message
+                setUser(response?.data);
+                replace("/select-shop");
+
+            } else {
+                console.log("Failed");
+                console.log(response?.message);
+                console.log(response?.data);
+
+                // toast error message
+            }
+
+        } catch (err) {
+            console.error(err);
+
+            // toast error message
         }
     };
 
