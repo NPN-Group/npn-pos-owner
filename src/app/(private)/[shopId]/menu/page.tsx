@@ -1,5 +1,7 @@
 "use client";
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import LocalDiningRoundedIcon from "@mui/icons-material/LocalDiningRounded";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import {
@@ -9,95 +11,14 @@ import {
   TextField,
   Button,
 } from "@mui/material";
-
-type FoodItem = {
-  name: string;
-  img: string | null;
-  price: string;
-  description: string;
-};
+import { Food } from "@/shared/types";
+import { getFoods } from "@/shared/services";
+import Image from "next/image";
 
 type Category = {
   name: string;
-  foods: FoodItem[];
+  foods: Food[];
 };
-
-const catagory = [
-  {
-    name: "Main course",
-    foods: [
-      {
-        name: "Steak",
-        img: "https://www.seriouseats.com/thmb/-KA2hwMofR2okTRndfsKtapFG4Q=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/__opt__aboutcom__coeus__resources__content_migration__serious_eats__seriouseats.com__recipes__images__2015__05__Anova-Steak-Guide-Sous-Vide-Photos15-beauty-159b7038c56a4e7685b57f478ca3e4c8.jpg",
-        price: "$25",
-        description: "Grilled steak with vegetables and sauce.",
-      },
-      {
-        name: "Pasta",
-        img: "https://www.allrecipes.com/thmb/mvO1mRRH1zTz1SvbwBCTz78CRJI=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/67700_RichPastaforthePoorKitchen_ddmfs_4x3_2284-220302ec8328442096df370dede357d7.jpg",
-        price: "$15",
-        description: "Creamy Alfredo pasta with chicken.",
-      },
-    ],
-  },
-  {
-    name: "Appetizers",
-    foods: [
-      {
-        name: "Spring Rolls",
-        img: "https://zenaskitchen.com/wp-content/uploads/2022/02/Pork-Vegetable-Spring-Rolls.jpg",
-        price: "$8",
-        description: "Crispy spring rolls with sweet chili sauce.",
-      },
-      {
-        name: "Garlic Bread",
-        img: "https://www.allrecipes.com/thmb/JPYAOXw7_0SBDpxAEaHxAGpxbe0=/0x512/filters:no_upscale():max_bytes(150000):strip_icc()/21080-great-garlic-bread-DDMFS-4x3-e1c7b5c79fde4d629a9b7bce6c0702ed.jpg",
-        price: "$6",
-        description: "Toasted garlic bread with herbs.",
-      },
-    ],
-  },
-  {
-    name: "Beverages",
-    foods: [
-      {
-        name: "Lemonade",
-        img: "https://cdn.apartmenttherapy.info/image/upload/f_jpg,q_auto:eco,c_fill,g_auto,w_1500,ar_1:1/k%2Farchive%2Fbcbceed90d40c95acd29cf8295f6fda017ba9887",
-        price: "$4",
-        description: "Freshly squeezed lemonade.",
-      },
-      {
-        name: "Coffee",
-        img: "https://thumbs.dreamstime.com/b/cup-cofee-20825194.jpg",
-        price: "$3",
-        description: "Hot brewed coffee.",
-      },
-      {
-        name: "Tea",
-        img: "https://www.aicr.org/wp-content/uploads/2020/06/peppermint-tea-on-teacup-1417945.jpg",
-        price: "$2",
-        description: "Refreshing green tea.",
-      },
-    ],
-  },
-  {
-    name: "Desserts",
-    foods: [
-      {
-        name: "Ice Cream",
-        img: "https://www.allrecipes.com/thmb/SI6dn__pfJb9G5eBpYAqkyGCLxQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/50050-five-minute-ice-cream-DDMFS-4x3-076-fbf49ca6248e4dceb3f43a4f02823dd9.jpg",
-        price: "$5",
-        description: "Vanilla ice cream with chocolate syrup.",
-      },
-      {
-        name: "Cake",
-        img: "https://sugargeekshow.com/wp-content/uploads/2023/10/easy_chocolate_cake_slice.jpg",
-        price: "$7",
-        description: "Moist chocolate cake with frosting.",
-      },
-    ],
-  },
-];
 
 type NewFood = {
   name: string;
@@ -108,10 +29,15 @@ type NewFood = {
 };
 
 export default function MenuPage() {
+  const pathname = usePathname();
+  const shopId = pathname.split("/")[1]; // Extract shopId from the path
+
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isCategoryModalOpen, setCategoryModalOpen] = useState<boolean>(false);
   const [isFoodModalOpen, setFoodModalOpen] = useState<boolean>(false);
   const [newCategoryName, setNewCategoryName] = useState<string>("");
-  const [editingFood, setEditingFood] = useState<FoodItem | null>(null);
+  const [editingFood, setEditingFood] = useState<Food | null>(null);
   const [newFood, setNewFood] = useState<NewFood>({
     name: "",
     img: null,
@@ -120,21 +46,52 @@ export default function MenuPage() {
     description: "",
   });
 
-  const handleOpenFoodModal = (food?: FoodItem): void => {
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const response = await getFoods(shopId);
+        const foods = response.data ?? []; // Use an empty array if no data
+
+        // Group foods by category
+        const groupedCategories: Category[] = foods.reduce((acc, food) => {
+          const categoryName = food.category || "Other"; // Default to "Other" if no category
+          const category = acc.find((cat) => cat.name === categoryName);
+
+          if (category) {
+            category.foods.push(food);
+          } else {
+            acc.push({
+              name: categoryName,
+              foods: [food],
+            });
+          }
+
+          return acc;
+        }, [] as Category[]);
+
+        setCategories(groupedCategories);
+      } catch (error) {
+        console.error("Error fetching foods:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (shopId) fetchData();
+  }, [shopId]);
+
+  const handleOpenFoodModal = (food?: Food): void => {
     if (food) {
-      // Edit existing food
       setEditingFood(food);
       setNewFood({
         name: food.name,
         img: null,
-        category: catagory.find((cat) =>
-          cat.foods.find((f) => f.name === food.name)
-        )?.name || "",
-        price: food.price.replace("$", ""),
-        description: food.description,
+        category: food.category || "Uncategorized",
+        price: food.price.toString(),
+        description: food.description || "",
       });
     } else {
-      // Add new food
       setEditingFood(null);
       setNewFood({
         name: "",
@@ -194,64 +151,70 @@ export default function MenuPage() {
     <>
       <div className="flex gap-4 text-lg">
         <LocalDiningRoundedIcon />
-        <div className="font-medium">Shop Name</div>
+        <div className="font-medium">Shop Menu</div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 mt-4 md:grid-cols-2 lg:grid-cols-3">
-        {catagory.map((item, index) => (
-          <div key={index} className="bg-white shadow-md rounded-lg p-4">
-            <div className="flex justify-between">
+      {isLoading ? (
+        <div className="text-center mt-4">Loading...</div>
+      ) : (
+        <div className="grid grid-cols-1 gap-4 mt-4 md:grid-cols-2 lg:grid-cols-3">
+          {categories.map((item, index) => (
+            <div key={index} className="bg-white shadow-md rounded-lg p-4">
               <div className="text-lg font-semibold">{item.name}</div>
-            </div>
-            <div className="grid grid-cols-1 gap-4 mt-4">
-              {item.foods.map((food, index) => (
-                <div
-                  key={index}
-                  className="flex gap-4 cursor-pointer"
-                  onClick={() => {
-                    handleOpenFoodModal(food);
-                  }}
-                >
-                  <img
-                    src={food.img || ""}
-                    alt={food.name}
-                    className="w-24 h-24 object-cover rounded-lg transition-all duration-150 ease-in-out hover:scale-110 hover:border-2 hover:border-[#F5533D]"
-                  />
-                  <div>
-                    <div className="text-lg font-semibold">{food.name}</div>
-                    <div className="text-sm text-gray-500">
-                      {food.description}
+              <div className="grid grid-cols-1 gap-4 mt-4">
+                {item.foods.map((food, foodIndex) => (
+                  <div key={foodIndex} className="flex gap-4">
+                    {food.img ? (
+                      <Image
+                        src={`${process.env.NEXT_PUBLIC_ENV}/uploads/${food.img}`}
+                        alt={food.name}
+                        width={100}
+                        height={100}
+                        className="w-24 h-24 object-cover rounded-lg transition-all duration-150 ease-in-out hover:scale-110 hover:border-2 hover:border-[#F5533D]"
+                      />
+                    ) : (
+                      <div className="w-24 h-24 bg-gray-200 rounded-lg flex items-center justify-center">
+                        No Image
+                      </div>
+                    )}
+
+                    <div>
+                      <div className="text-lg font-semibold">{food.name}</div>
+                      <div className="text-sm text-gray-500">
+                        {food.description || "No description available"}
+                      </div>
+                      <div className="text-lg font-semibold">${food.price}</div>
                     </div>
-                    <div className="text-lg font-semibold">{food.price}</div>
+                  </div>
+                ))}
+              </div>
+              <div className="flex gap-4">
+                <div
+                  className="m-8 cursor-pointer"
+                  onClick={() => handleOpenFoodModal()}
+                >
+                  <AddCircleOutlineIcon className="w-8 h-8 object-cover rounded-lg text-sm text-[#F5533D] transition-transform duration-300 ease-in-out hover:scale-125" />
+                </div>
+                <div className="flex justify-center items-center">
+                  <div className="text-lg font-normal text-slate-500">
+                    Add new Food
                   </div>
                 </div>
-              ))}
-            </div>
-            <div className="flex gap-4">
-              <div className="m-8 cursor-pointer"
-                onClick={() => handleOpenFoodModal()}
-              >
-                <AddCircleOutlineIcon className="w-8 h-8 object-cover rounded-lg text-sm text-[#F5533D] transition-transform duration-300 ease-in-out hover:scale-125" />
-              </div>
-              <div className="flex justify-center items-center">
-                <div className="text-lg font-normal text-slate-500">
-                  Add new Food
-                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
 
-        <div
-          className="shadow-md rounded-lg p-4 flex flex-col justify-center items-center cursor-pointer"
-          onClick={handleOpenCategoryModal}
-        >
-          <AddCircleOutlineIcon className="w-16 h-16 text-[#F5533D] transition-transform duration-300 ease-in-out hover:scale-125" />
-          <div className="mt-4 text-lg font-medium text-gray-700">
-            Add New Category
+          <div
+            className="shadow-md rounded-lg p-4 flex flex-col justify-center items-center cursor-pointer"
+            onClick={handleOpenCategoryModal}
+          >
+            <AddCircleOutlineIcon className="w-16 h-16 text-[#F5533D] transition-transform duration-300 ease-in-out hover:scale-125" />
+            <div className="mt-4 text-lg font-medium text-gray-700">
+              Add New Category
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       <Dialog
         open={isCategoryModalOpen}
@@ -301,7 +264,6 @@ export default function MenuPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Add/Edit Food Modal */}
       <Dialog
         open={isFoodModalOpen}
         onClose={handleCloseFoodModal}
