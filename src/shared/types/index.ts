@@ -6,3 +6,4 @@ export * from "./common";
 export * from "./api";
 export * from "./order";
 export * from "./receipt";
+export * from "./food";

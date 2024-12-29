@@ -72,7 +72,7 @@ export default function Login() {
         <section className="grid place-items-center min-h-screen">
             <div className="flex flex-col w-full justify-center items mx-auto py-4 gap-8 sm:max-w-[25rem] sm:border-black sm:border-opacity-20 sm:border-[1px] sm:box-border sm:min-h-[80vh] sm:shadow-xl">
                 <div className="flex flex-col items-center gap-4 sm:mb-auto">
-                    <Image src="/assets/logo.svg" alt="logo" width={100} height={100} />
+                    <Image src="/assets/logo.svg" alt="logo" width={100} height={100} priority/>
                     <div className="flex flex-col gap-2">
                         <h1 className="text-xl font-bold text-center">Welcome Back!</h1>
                         <p className="text-lg font-semibold text-center">Connect your account</p>
