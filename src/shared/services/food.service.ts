@@ -1,5 +1,5 @@
 import { fetcherCSR } from "@/shared/lib";
-import { APIResponse, Food } from "@/shared/types";
+import { APIResponse, Food, TCreateFood } from "@/shared/types";
 
 export async function getFoods(shopId: string): Promise<APIResponse<Food[]>> {
     return fetcherCSR<Food[]>(
@@ -14,4 +14,32 @@ export async function getFoods(shopId: string): Promise<APIResponse<Food[]>> {
     );
   }
   
+  export async function createFood(params: TCreateFood): Promise<APIResponse<Food>> {
+    const formData = new FormData();
+  
+    // Add JSON data
+    const jsonPayload = JSON.stringify({
+      name: params.name,
+      price: params.price,
+      description: params.description || null,
+      category: params.category || null,
+      shop: params.shop,
+    });
+  
+    formData.append('json', jsonPayload);
+  
+    if (params.img instanceof File) {
+      formData.append('food-image', params.img); // Match backend field name
+    }
+  
+    const response = await fetcherCSR<Food>(
+      `${process.env.NEXT_PUBLIC_ENV}/api/foods`,
+      {
+        method: 'POST',
+        body: formData,
+      }
+    );
+  
+    return response;
+  }
   

@@ -2,7 +2,6 @@
 
 import { APIResponse } from "@/shared/types";
 
-// Fetcher function to handle API requests on the client side
 export async function fetcherCSR<T>(url: string, options?: RequestInit): Promise<APIResponse<T>> {
     try {
         const response = await fetch(url, {
@@ -43,6 +42,7 @@ export async function fetcherCSR<T>(url: string, options?: RequestInit): Promise
         return {
             statusCode: 400,
             message: 'An error occurred',
+            
             error: [err],
         }
     }
