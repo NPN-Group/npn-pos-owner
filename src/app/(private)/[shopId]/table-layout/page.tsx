@@ -2,26 +2,21 @@
 import { useState } from "react";
 import TableRestaurantOutlinedIcon from "@mui/icons-material/TableRestaurantOutlined";
 import { Popover, Backdrop } from "@mui/material";
-import { Table, TableInformation } from "@/shared/components";
+import Table from "@/shared/components/Table";
+import TableInformation from "@/shared/components/TableInformation";
 
 export default function Menu() {
   const [activeId, setActiveId] = useState<number | null>(null);
   const [anchorPosition, setAnchorPosition] = useState<{ top: number; left: number } | null>(null);
 
-  const tables = [
-    { id: 1, startTime: "10:00 AM", quantity: 4 },
-    { id: 2, startTime: "11:00 AM", quantity: 3 },
-    { id: 3, startTime: "12:00 PM", quantity: 5 },
-    { id: 4, startTime: "12:00 PM", quantity: 5 },
-    { id: 5, startTime: "12:00 PM", quantity: 5 },
-    { id: 6, startTime: "12:00 PM", quantity: 5 },
-    { id: 7, startTime: "12:00 PM", quantity: 5 },
-    { id: 8, startTime: "12:00 PM", quantity: 5 },
-    { id: 9, startTime: "12:00 PM", quantity: 5 },
-    { id: 10, startTime: "12:00 PM", quantity: 5 },
-    { id: 11, startTime: "12:00 PM", quantity: 5 },
-    { id: 12, startTime: "12:00 PM", quantity: 5 },
-  ];
+  // Initialize 12 tables with default data
+  const [tables, setTables] = useState(
+    Array.from({ length: 12 }, (_, index) => ({
+      id: index + 1,
+      startTime: "Not Reserved", // Default start time
+      quantity: 0, // Default number of seats
+    }))
+  );
 
   const handleTableClick = (id: number, event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation(); // Prevent event bubbling
@@ -40,12 +35,17 @@ export default function Menu() {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 grid-flow-row pr-20 pl-40">
         {tables.map((table) => (
-          <Table
+          <div
             key={table.id}
-            Tables={table}
-            isActive={activeId === table.id}
-            onClick={(id, event) => handleTableClick(id, event)} // Pass both id and event
-          />
+            onClick={(e) => handleTableClick(table.id, e)} // Pass ID and event
+            style={{ cursor: "pointer" }}
+          >
+            <Table
+              Tables={table}
+              isActive={activeId === table.id}
+              onClick={(id, event) => handleTableClick(id, event)} // Pass both ID and event
+            />
+          </div>
         ))}
       </div>
     );
@@ -53,7 +53,7 @@ export default function Menu() {
 
   return (
     <>
-      <div className="flex justify-start gap- px-5">
+      <div className="flex justify-start gap-2 px-5">
         <TableRestaurantOutlinedIcon className="text-[30px]" />
         <div className="text-[20px] font-semibold">Table Layout</div>
       </div>
