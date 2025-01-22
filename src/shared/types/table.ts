@@ -4,7 +4,8 @@ export type Table = {
     quantity: number;
 }
 export interface TableProps {
-    Tables: Table;
-    onClick?: (id: number) => void;
+    Tables: { id: number; startTime: string; quantity: number };
+    onClick?: (id: number, event?: React.MouseEvent<HTMLButtonElement | HTMLDivElement>) => void;
     isActive?: boolean;
-}
+  }
+  
