@@ -23,7 +23,7 @@ export default async function Page() {
                         className="flex items-center justify-center w-7 h-7 bg-gray-300 rounded-full border-2 border-[#f0f0f0] hover:cursor-pointer"
                     >
                         <Image
-                            src={avatarImage}
+                            src={`${process.env.NEXT_PUBLIC_ENV}/uploads/${user?.img}`}
                             alt="avatar"
                             priority={true}
                             width={100}

@@ -30,14 +30,16 @@ export default function Header({ onMenuToggle }: HeaderProps) {
                     <NotificationsIcon className="text-2xl text-gray-600" />
                 </div>
                 <div onClick={() => console.log(`Avatar clicked`)} className="flex items-center justify-center w-7 h-7 bg-gray-300 rounded-full border-2 border-[#f0f0f0] hover:cursor-pointer">
-                    <Image
-                        src={avatarImage}
-                        alt="avatar"
-                        priority={true}
-                        width={100}
-                        height={100}
-                        className="rounded-full w-6 h-6 hover:border-4 border-white box-content"
-                    />
+                    <Link href={`/${shopId}/profile`}>
+                        <Image
+                            src={`${process.env.NEXT_PUBLIC_ENV}/uploads/${user?.img}`}
+                            alt="avatar"
+                            priority={true}
+                            width={100}
+                            height={100}
+                            className="rounded-full w-6 h-6 hover:border-4 border-white box-content"
+                        />
+                    </Link>
                 </div>
             </div>
         </header>
